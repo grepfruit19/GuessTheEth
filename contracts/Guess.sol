@@ -6,7 +6,15 @@ contract Guess {
 
     // Constructor, gives this contract 10k coins
     function Guess(){
-        // MetaCoin(); //I think this should give the contract 10k coins
+        MetaCoin metaCoin = new MetaCoin(); //I think this should give the contract 10k coins
+    }
+
+    function getContractAddress() constant returns (address){
+        return this;
+    }
+
+    function getThrowaway() constant returns (string){
+        return "Hello";
     }
     /* Intended behavior:
         This contract should own 10,000 MetaCoin upon construction
