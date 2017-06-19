@@ -1,0 +1,21 @@
+{
+  "contract_name": "Guess",
+  "abi": [
+    {
+      "inputs": [],
+      "payable": false,
+      "type": "constructor"
+    }
+  ],
+  "unlinked_binary": "0x60606040523415600b57fe5b5b5b5b603380601b6000396000f30060606040525bfe00a165627a7a72305820d20bcda5e54d39bdca5ea13762cf7abf1cfb23593a262196a0171ffe48ffe8da0029",
+  "networks": {
+    "1497899301883": {
+      "events": {},
+      "links": {},
+      "address": "0xed76f408f9844528b1acd4f7857897ba86e1a814",
+      "updated_at": 1497900075505
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1497900075505
+}
