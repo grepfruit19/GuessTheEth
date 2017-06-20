@@ -8,12 +8,19 @@ pragma solidity ^0.4.4;
 // token, see: https://github.com/ConsenSys/Tokens. Cheers!
 
 contract MetaCoin {
+	address owner;
+
 	mapping (address => uint) balances;
 
 	event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
 	function MetaCoin() {
+		owner = msg.sender;
 		balances[msg.sender] = 10000;
+	}
+	
+	function getOwner() returns(address owner){
+		return owner;
 	}
 
 	function sendCoin(address receiver, uint amount) returns(bool sufficient) {

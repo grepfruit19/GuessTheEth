@@ -3,19 +3,23 @@ pragma solidity ^0.4.4;
 import "./MetaCoin.sol";
 
 contract Guess {
+    address coinAddress;
 
     // Constructor, gives this contract 10k coins
     function Guess(){
         MetaCoin metaCoin = new MetaCoin(); //I think this should give the contract 10k coins
     }
 
+    function createCoin(){
+        address metaCoin = new MetaCoin();
+        coinAddress = metaCoin;
+    }
+
     function getContractAddress() constant returns (address){
         return this;
     }
 
-    function getThrowaway() constant returns (string){
-        return "Hello";
-    }
+
     /* Intended behavior:
         This contract should own 10,000 MetaCoin upon construction
         Has a static array of 10 elements with numbers [1,10]
