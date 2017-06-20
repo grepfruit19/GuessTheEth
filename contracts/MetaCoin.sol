@@ -16,7 +16,7 @@ contract MetaCoin {
 
 	function MetaCoin(address caller) {
 		owner = caller;
-		balances[owner] = 10000;
+		balances[caller] = 10000;
 	}
 
 	function coinsOwned() returns(uint){
