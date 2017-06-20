@@ -14,12 +14,16 @@ contract MetaCoin {
 
 	event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
-	function MetaCoin() {
-		owner = msg.sender;
-		balances[msg.sender] = 10000;
+	function MetaCoin(address caller) {
+		owner = caller;
+		balances[owner] = 10000;
 	}
-	
-	function getOwner() returns(address owner){
+
+	function coinsOwned() returns(uint){
+		return balances[this];
+	}
+
+	function getOwner() returns(address){
 		return owner;
 	}
 
@@ -31,11 +35,8 @@ contract MetaCoin {
 		return true;
 	}
 
-	/*function getBalanceInEth(address addr) returns(uint){
-		return ConvertLib.convert(getBalance(addr),2);
-	}*/
-
 	function getBalance(address addr) returns(uint) {
 		return balances[addr];
 	}
+
 }
