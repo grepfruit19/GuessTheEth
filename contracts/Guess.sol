@@ -10,11 +10,6 @@ contract Guess {
         MetaCoin metaCoin = new MetaCoin(); //I think this should give the contract 10k coins
     }
 
-    function createCoin(){
-        address metaCoin = new MetaCoin();
-        coinAddress = metaCoin;
-    }
-
     function getContractAddress() constant returns (address){
         return this;
     }
