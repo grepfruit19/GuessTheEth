@@ -14,9 +14,9 @@ contract MetaCoin {
 
 	event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
-	function MetaCoin(address caller) {
-		owner = caller;
-		balances[caller] = 10000;
+	function MetaCoin() {
+		owner = msg.sender;
+		balances[msg.sender] = 10000;
 	}
 
 	function coinsOwned() returns(uint){

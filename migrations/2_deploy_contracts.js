@@ -7,7 +7,8 @@ module.exports = function(deployer) {
   // deployer.link(ConvertLib, MetaCoin);
   // deployer.deploy(MetaCoin);
   // deployer.link(MetaCoin, Guess);
-  deployer.deploy(Guess).then(function(){
-      return deployer.deploy(MetaCoin, Guess.address);
-  });
+  // deployer.deploy(Guess).then(function(){
+  //     return deployer.deploy(MetaCoin, Guess.address);
+  // });
+  deployer.deploy(Guess);
 };
