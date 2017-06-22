@@ -1,22 +1,4 @@
 var Guess = artifacts.require("./Guess.sol");
-var Promise = require('bluebird');
-
-// This is a promise loop function used for the peek/pop test.
-function promiseWhile(condition, action) {
-    var resolver = Promise.defer();
-
-    var loop = function() {
-        if (!condition()) return resolver.resolve();
-        return Promise.cast(action())
-            .then(loop)
-            .catch(resolver.reject);
-    };
-
-    process.nextTick(loop);
-
-    return resolver.promise;
-};
-
 
 contract('Guess', function(accounts){
     it("should give users 100 coins upon registration, but not double credit", function(){
@@ -113,5 +95,34 @@ contract('Guess', function(accounts){
             assert.equal(loopedNum, 3, "Array should loop after completion");
         });
     });
+    it("guesses should credit 4 coins when correct", function(){
+        var guess;
 
+        var account = accounts[0];
+        var origBalance;
+        var finalBalance;
+        var transactionStatus;
+
+        return Guess.deployed().then(function(instance){
+            guess = instance;
+            return guess.initializeCoin();
+        }).then(function(){
+            return guess.registerUser({from: account});
+        }).then(function(success){
+            console.log(success);
+            return guess.getBalance.call(account);
+        }).then(function(balance){
+            origBalance = balance;
+            return guess.takeGuess(3);
+        }).then(function(success){
+            transactionStatus = success;
+            return guess.getBalance.call(account);
+        }).then(function(balance){
+            finalBalance = balance;
+
+            assert.equal(origBalance, 100, "Registration okay");
+            assert.equal(finalBalance, 104, "Coins credited on win");
+            assert.equal(transactionStatus, true, "Transaction success");
+        });
+    }
 });

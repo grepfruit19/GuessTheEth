@@ -43,14 +43,21 @@ contract Guess {
         }
     }
 
-    function takeGuess(uint guess) {
-        // Check if sender has at least 1 coin.
-
-        // If yes, test their guess against peekNumber.
-
-        // If that's correct, send 4 coins to that account
-
-        // If incorrect, take 1 coin from that account.
+    function takeGuess(int guess) returns (bool){
+        uint balance = getBalance(msg.sender);
+        if (balance>0){
+            int actual = popNumber();
+            if (guess == actual){
+                coin.sendCoin(msg.sender, 4);
+                return true;
+            } else {
+                coin.sendCoin(this, 1, {from: msg.sender});
+                return false;
+            }
+        } else {
+            return false;
+        }
+        return false;
     }
 
     // Returns current number without moving index.
