@@ -1,6 +1,23 @@
 var Guess = artifacts.require("./Guess.sol");
 var Promise = require('bluebird');
 
+// This is a promise loop function used for the peek/pop test.
+function promiseWhile(condition, action) {
+    var resolver = Promise.defer();
+
+    var loop = function() {
+        if (!condition()) return resolver.resolve();
+        return Promise.cast(action())
+            .then(loop)
+            .catch(resolver.reject);
+    };
+
+    process.nextTick(loop);
+
+    return resolver.promise;
+};
+
+
 contract('Guess', function(accounts){
     it("should give users 100 coins upon registration, but not double credit", function(){
         var guess;
@@ -50,8 +67,12 @@ contract('Guess', function(accounts){
         var correctArray = [4, 2, 5, 1];
         var loopedNum;
 
-        // This next part is going to be more painful to read than it was to write.
-        // but I didn't feel like taking time out to learn Promise loops while writing this
+        var iterator = 0;
+        var stop = 4;
+
+        // I tried using Promise loops but they caused more problems than they fixed
+        // So you have to look at this terrible, terrible chain of promises.
+        // Thank god for Promises.
         return Guess.deployed().then(function(instance){
             guess = instance;
             return guess.peekNumber.call();
@@ -60,12 +81,37 @@ contract('Guess', function(accounts){
             return guess.popNumber.call();
         }).then(function(number){
             firstPop = number;
+            return guess.popNumber(); //Now the array should be on the second element
+        }).then(function(transaction){
+            return guess.popNumber.call(); // Pop
+        }).then(function(number){
+            testArray.push(number.toNumber()); // Get value 4
             return guess.popNumber();
-        })
+        }).then(function(transaction){
+            return guess.popNumber.call(); // Pop
+        }).then(function(number){
+            testArray.push(number.toNumber()); // Get value
+            return guess.popNumber();
+        }).then(function(transaction){
+            return guess.popNumber.call(); // Pop
+        }).then(function(number){
+            testArray.push(number.toNumber()); // Get value
+            return guess.popNumber();
+        }).then(function(transaction){
+            return guess.popNumber.call(); // Pop
+        }).then(function(number){
+            testArray.push(number.toNumber()); // Get value -- This should be the end of the "loop"
+            return guess.popNumber();
+        }).then(function(transaction){
+            return guess.popNumber.call(); // Pop
+        }).then(function(number){
+            loopedNum = number; // Post loop, should be value 3.
+            return guess.popNumber();
 
             assert.equal(firstPeek, firstPop, "Peek should not change the array");
             assert.equal(testArray, correctArray, "Pop should change the index");
             assert.equal(loopedNum, 3, "Array should loop after completion");
-        })
+        });
     });
+
 });

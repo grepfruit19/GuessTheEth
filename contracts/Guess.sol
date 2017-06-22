@@ -44,10 +44,13 @@ contract Guess {
     }
 
     function takeGuess(uint guess) {
-        /*
-        if balance<10, no
+        // Check if sender has at least 1 coin.
 
-        */
+        // If yes, test their guess against peekNumber.
+
+        // If that's correct, send 4 coins to that account
+
+        // If incorrect, take 1 coin from that account.
     }
 
     // Returns current number without moving index.
