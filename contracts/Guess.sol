@@ -4,14 +4,19 @@ import "./MetaCoin.sol";
 
 contract Guess {
     MetaCoin coin;
+    uint index = 0;
+    uint numArrayMax = 5;
+    int[5] numArray;
 
     mapping (address => bool) registered;
 
-    function Guess(){
 
+    function Guess(){
+        //Random numbers
+        numArray = [3,4,2,5,1];
     }
 
-    // Gives this contract 10k coins.
+    // Construct MetaCoin and credit 10k to this contract.
     function initializeCoin() returns (address){
         MetaCoin metaCoin = new MetaCoin();
         coin = metaCoin;
@@ -26,11 +31,7 @@ contract Guess {
         return coin.getBalance(arg);
     }
 
-    function getCoinAddress() constant returns (address){
-        return coin;
-    }
-
-    function registerUser(address sender) returns (bool){
+    function registerUser() returns (bool){
         address currentAddress = msg.sender;
 
         if (registered[currentAddress] == false){
@@ -49,9 +50,22 @@ contract Guess {
         */
     }
 
-    /*
-    Register new users and give them 100 MetaCoin
+    // Returns current number without moving index.
+    function peekNumber() returns (int){
+        return numArray[index];
+    }
 
-    */
+    // Returns current number and increments index.
+    function popNumber() returns (int){
+        int output;
+        if (index == numArrayMax -1){
+            output = numArray[index];
+            index = 0;
+        } else {
+            output = numArray[index];
+            index = index + 1;
+        }
+        return output;
+    }
 
 }
