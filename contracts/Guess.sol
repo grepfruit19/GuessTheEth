@@ -43,18 +43,27 @@ contract Guess {
         }
     }
 
+    function approveValue(uint256 value) returns (bool){
+        //msg.sender approves this contract to take "value" coins.
+        return coin.approve(msg.sender, this, value);
+    }
+
+    function takeCoin(uint256 value) returns (bool){
+        return coin.takeCoin(msg.sender, this, value);
+    }
+
     function takeGuess(int guess) returns (bool){
+        coin.approve(msg.sender, this, 1);
         uint balance = getBalance(msg.sender);
         if (balance>0){
             int actual = popNumber();
-            coin.sendCoin(this, 1, {from: msg.sender});
-            /*if (guess == actual){
+            if (guess == actual){
                 coin.sendCoin(msg.sender, 4);
                 return true;
             } else {
-                coin.sendCoin(this, 1, {from: msg.sender});
+                coin.takeCoin(msg.sender, this, 1);
                 return false;
-            }*/
+            }
         } else {
             return false;
         }

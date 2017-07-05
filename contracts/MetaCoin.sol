@@ -9,17 +9,24 @@ pragma solidity ^0.4.4;
 
 contract MetaCoin {
 	address owner;
+	uint256 _totalSupply = 10000;
 
-	mapping (address => uint) balances;
+	mapping (address => uint256) balances;
+	mapping (address => mapping (address => uint)) allowed;
 
 	event Transfer(address indexed _from, address indexed _to, uint256 _value);
+	event Approval(address indexed _owner, address indexed _collector, uint256 _value);
 
 	function MetaCoin() {
 		owner = msg.sender;
 		balances[msg.sender] = 10000;
 	}
 
-	function coinsOwned() returns(uint){
+	function totalSupply() constant returns (uint256 totalSupply){
+		totalSupply = _totalSupply;
+	}
+
+	function coinsOwned() returns(uint256){
 		return balances[this];
 	}
 
@@ -34,6 +41,37 @@ contract MetaCoin {
 		Transfer(msg.sender, receiver, amount);
 		return true;
 	}
+
+	// Takes money from a user, if user approved beforehand.
+	function takeCoin(address _from, address _to, uint256 _amount) returns (bool success){
+		if (balances[_from] >= _amount
+			//This line is causing some issues. Is it approve or this?
+			&& allowed[_from][msg.sender] >= _amount //See if [owner] approved [msg.sender]
+			&& _amount > 0
+			&& balances[_to] + _amount > balances[_to]){
+				balances[_from] -= _amount;
+				allowed[_from][msg.sender] -= _amount;
+				balances[_to] += _amount;
+				Transfer(_from, _to, _amount);
+				return true;
+			} else {
+				return false;
+			}
+	}
+
+	//Custom implementation of approve.
+	function approve(address owner, address collector, uint256 amount) returns (bool success){
+		allowed[owner][collector] = amount;
+		Approval(owner, collector, amount);
+		return true;
+	}
+
+	/*// Approval for takeCoin
+	function approve(address _collector, uint256 _amount) returns (bool success){
+		allowed[msg.sender][_collector] = _amount; // [msg.sender] approves [_spender]
+		Approval(msg.sender, _collector, _amount);
+		return true;
+	}*/
 
 	function getBalance(address addr) returns(uint) {
 		return balances[addr];

@@ -95,34 +95,69 @@ contract('Guess', function(accounts){
             assert.equal(loopedNum, 3, "Array should loop after completion");
         });
     });
-    it("guesses should credit 4 coins when correct", function(){
+    it("takeCoin works correctly", function(){
         var guess;
 
-        var account = accounts[0];
-        var origBalance;
-        var finalBalance;
-        var transactionStatus;
+        var account = accounts[2];
+        var approveSuccess;
+        var takeCoinSuccess;
+        var endBalance;
 
         return Guess.deployed().then(function(instance){
             guess = instance;
             return guess.initializeCoin();
         }).then(function(){
             return guess.registerUser({from: account});
-        }).then(function(success){
-            console.log(success);
+        }).then(function(){
             return guess.getBalance.call(account);
         }).then(function(balance){
-            origBalance = balance;
-            return guess.takeGuess(3);
+            console.log(balance.toNumber());
+            return guess.approveValue.call(100);
         }).then(function(success){
-            transactionStatus = success;
+            approveSuccess = success;
+            return guess.approveValue(100, {from: account});
+        }).then(function(){
+            return guess.takeCoin.call(5, {from: account});
+        }).then(function(success){
+            assert.equal(success, true, "Called takeCoin");
+            return guess.takeCoin(5, {from: account});
+        }).then(function(){
             return guess.getBalance.call(account);
         }).then(function(balance){
-            finalBalance = balance;
+            endBalance = balance.toNumber();
 
-            assert.equal(origBalance, 100, "Registration okay");
-            assert.equal(finalBalance, 104, "Coins credited on win");
-            assert.equal(transactionStatus, true, "Transaction success");
+            assert.equal(true, approveSuccess, "Approve successful");
+            assert.equal(endBalance, 95, "Took coins successfully");
         });
-    }
+    });
+    // it("guesses should credit 4 coins when correct", function(){
+    //     var guess;
+    //
+    //     var account = accounts[0];
+    //     var origBalance;
+    //     var finalBalance;
+    //     var transactionStatus;
+    //
+    //     return Guess.deployed().then(function(instance){
+    //         guess = instance;
+    //         return guess.initializeCoin();
+    //     }).then(function(){
+    //         return guess.registerUser({from: account});
+    //     }).then(function(success){
+    //         console.log(success);
+    //         return guess.getBalance.call(account);
+    //     }).then(function(balance){
+    //         origBalance = balance;
+    //         return guess.takeGuess(3);
+    //     }).then(function(success){
+    //         transactionStatus = success;
+    //         return guess.getBalance.call(account);
+    //     }).then(function(balance){
+    //         finalBalance = balance;
+    //
+    //         assert.equal(origBalance, 100, "Registration okay");
+    //         assert.equal(finalBalance, 104, "Coins credited on win");
+    //         assert.equal(transactionStatus, true, "Transaction success");
+    //     });
+    // }
 });
