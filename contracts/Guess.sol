@@ -53,7 +53,6 @@ contract Guess {
     }
 
     function takeGuess(int guess) returns (bool){
-        coin.approve(msg.sender, this, 1);
         uint balance = getBalance(msg.sender);
         if (balance>0){
             int actual = popNumber();
@@ -62,7 +61,7 @@ contract Guess {
                 return true;
             } else {
                 coin.takeCoin(msg.sender, this, 1);
-                return false;
+                return true;
             }
         } else {
             return false;

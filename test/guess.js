@@ -111,7 +111,6 @@ contract('Guess', function(accounts){
         }).then(function(){
             return guess.getBalance.call(account);
         }).then(function(balance){
-            console.log(balance.toNumber());
             return guess.approveValue.call(100);
         }).then(function(success){
             approveSuccess = success;
@@ -130,34 +129,76 @@ contract('Guess', function(accounts){
             assert.equal(endBalance, 95, "Took coins successfully");
         });
     });
-    // it("guesses should credit 4 coins when correct", function(){
-    //     var guess;
-    //
-    //     var account = accounts[0];
-    //     var origBalance;
-    //     var finalBalance;
-    //     var transactionStatus;
-    //
-    //     return Guess.deployed().then(function(instance){
-    //         guess = instance;
-    //         return guess.initializeCoin();
-    //     }).then(function(){
-    //         return guess.registerUser({from: account});
-    //     }).then(function(success){
-    //         console.log(success);
-    //         return guess.getBalance.call(account);
-    //     }).then(function(balance){
-    //         origBalance = balance;
-    //         return guess.takeGuess(3);
-    //     }).then(function(success){
-    //         transactionStatus = success;
-    //         return guess.getBalance.call(account);
-    //     }).then(function(balance){
-    //         finalBalance = balance;
-    //
-    //         assert.equal(origBalance, 100, "Registration okay");
-    //         assert.equal(finalBalance, 104, "Coins credited on win");
-    //         assert.equal(transactionStatus, true, "Transaction success");
-    //     });
-    // }
+    it("guesses should credit 4 coins when correct", function(){
+        var guess;
+
+        var account = accounts[3];
+        var correctNumber;
+        var origBalance;
+        var finalBalance;
+        var transactionStatus;
+
+        return Guess.deployed().then(function(instance){
+            guess = instance;
+            return guess.initializeCoin();
+        }).then(function(){
+            return guess.registerUser({from: account});
+        }).then(function(success){
+            return guess.getBalance.call(account);
+        }).then(function(balance){
+            origBalance = balance.toNumber();
+            return guess.peekNumber.call();
+        }).then(function(number){
+            correctNumber = number.toNumber();
+            return guess.takeGuess.call(correctNumber, {from:account});
+        }).then(function(success){
+            transactionStatus = success;
+            return guess.takeGuess(correctNumber, {from:account});
+        }).then(function(success){
+            return guess.getBalance.call(account);
+        }).then(function(balance){
+            finalBalance = balance.toNumber();
+
+            assert.equal(origBalance, 100, "Registration okay");
+            assert.equal(finalBalance, 104, "Coins credited on win");
+            assert.equal(transactionStatus, true, "Transaction success");
+        });
+    });
+    it("takes one coin on incorrect guess", function(){
+        var guess;
+
+        var account = accounts[4];
+        var balancePreGuess;
+        var approveSuccess;
+        var guessSuccess;
+        var balancePostGuess;
+
+        return Guess.deployed().then(function(instance){
+            guess = instance;
+            return guess.initializeCoin();
+        }).then(function(){
+            return guess.registerUser({from: account});
+        }).then(function(){
+            return guess.getBalance.call(account);
+        }).then(function(balance){
+            balancePreGuess = balance.toNumber();
+            assert.equal(balancePreGuess, 100, "Account initialized successfully");
+            return guess.approveValue.call(1);
+        }).then(function(success){
+            approveSuccess = success;
+            assert.equal(approveSuccess, true, "Approved successfully");
+            return guess.approveValue(1, {from: account});
+        }).then(function(){
+            return guess.takeGuess.call(10, {from: account});
+        }).then(function(success){
+            guessSuccess = success;
+            assert.equal(guessSuccess, true, "Guess went through correctly");
+            return guess.takeGuess(10, {from: account});
+        }).then(function(){
+            return guess.getBalance.call(account);
+        }).then(function(balance){
+            balancePostGuess = balance.toNumber();
+            assert.equal(balancePostGuess, 99, "One coin taken for incorrect guess");
+        });
+    });
 });

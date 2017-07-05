@@ -45,7 +45,6 @@ contract MetaCoin {
 	// Takes money from a user, if user approved beforehand.
 	function takeCoin(address _from, address _to, uint256 _amount) returns (bool success){
 		if (balances[_from] >= _amount
-			//This line is causing some issues. Is it approve or this?
 			&& allowed[_from][msg.sender] >= _amount //See if [owner] approved [msg.sender]
 			&& _amount > 0
 			&& balances[_to] + _amount > balances[_to]){
