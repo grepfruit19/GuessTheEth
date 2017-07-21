@@ -12,14 +12,15 @@ contract('Guess', function(accounts){
         var acctBalanceTwo;
         var ownBalanceTwo;
 
+        // Access the contract's ABI
         return Guess.deployed().then(function(instance){
-            guess = instance;
+            guess = instance; // Assign ABI to var
             return guess.initializeCoin();
-        }).then(function(instance){
-            return guess.registerUser({from: account});
-        }).then(function(success){
-            return guess.getOwnBalance.call();
-        }).then(function(ownBalance){
+        }).then(function(){
+            return guess.registerUser({from: account}); // {from: account} is a notation that
+        }).then(function(){
+            return guess.getOwnBalance.call(); // Note that this is a .call()
+        }).then(function(ownBalance){ // ownBalance is the value returned by the call
             ownBalanceOne = ownBalance;
             return guess.getBalance.call(account);
         }).then(function(acctBalance){
@@ -54,7 +55,6 @@ contract('Guess', function(accounts){
 
         // I tried using Promise loops but they caused more problems than they fixed
         // So you have to look at this terrible, terrible chain of promises.
-        // Thank god for Promises.
         return Guess.deployed().then(function(instance){
             guess = instance;
             return guess.peekNumber.call();
@@ -129,7 +129,7 @@ contract('Guess', function(accounts){
             assert.equal(endBalance, 95, "Took coins successfully");
         });
     });
-    it("guesses should credit 4 coins when correct", function(){
+    it("credits 4 coins on correct guess", function(){
         var guess;
 
         var account = accounts[3];

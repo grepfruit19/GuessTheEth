@@ -18,7 +18,7 @@ contract MetaCoin {
 	event Approval(address indexed _owner, address indexed _collector, uint256 _value);
 
 	function MetaCoin() {
-		owner = msg.sender;
+		owner = msg.sender; // msg.sender comes from the Guess contract.
 		balances[msg.sender] = 10000;
 	}
 
